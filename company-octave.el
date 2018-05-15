@@ -5,7 +5,7 @@
 
 (defun company-octave-grab-prefix ()
   "Get the completion target, including '.' for completing struct members. Octave REPL has a function 'completion_matches' to give candidates."
-  (if (looking-at "\\_>")
+  (if (or (looking-at "\\_>") (looking-back "[a-zA-z_0-9]+\\."))
       (buffer-substring-no-properties (point)
                         (save-excursion
                           (skip-chars-backward "a-zA-Z_.0-9")
@@ -30,7 +30,7 @@
     (interactive (company-begin-backend 'company-octave-backend))
     (prefix (if (eq major-mode 'octave-mode)
                 (company-octave-grab-prefix)))
-    (candidates (company-octave-get-candidates))
+    (candidates (company-octave-get-candidates arg))
     ;; (annotation ())
     (init (inferior-octave))))
 
