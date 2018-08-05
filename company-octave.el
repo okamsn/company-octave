@@ -93,7 +93,7 @@
   "Set up company with the appropriate backends. You might wish to change this."
   (add-to-list 'company-backends 'company-octave-backend)
   (setq company-dabbrev-code-other-buffers 'code)
-  ;; (setq-mode-local octave company-dabbrev-code-ignore-case t)
+  (setq-mode-local octave company-dabbrev-code-ignore-case t)
   )
 
 (provide 'company-octave)
