@@ -39,7 +39,8 @@
 
 (require 'cl-lib)
 (require 'company)
-
+(require 'company-dabbrev)
+(require 'octave)
 
 (defun company-octave-grab-prefix ()
   "Get the completion target, including '.' for completing struct members."
@@ -54,24 +55,47 @@
       "")))
 
 (defun company-octave-get-candidates (prefix)
-  "Use Octave REPL's 'completion_matches' function to get candidates for PREFIX."
+  "Use Octave REPL's `completion_matches` function to get candidates for PREFIX."
   ;; (interactive)
   (with-local-quit
   (inferior-octave-send-list-and-digest (list (concat "completion_matches ('" prefix "');\n")))
   inferior-octave-output-list))
 
-(defun company-octave-get-annotation (prefix)
-  "Use Octave REPL's 'which' command to get inline annotations. It tells us the type of PREFIX. There's an error with completing structure names, so it just doesn't."
+(defun company-octave-get-annotation (candidate)
+  "Annotate whether the completion candidate CANDIDATE is a function or a variable by using Octave's `which` command. To avoid an error involving '.' and argument passing, it doesn't complete structure names."
   (with-local-quit
-    (if (string-match-p ".*\\..*" prefix) ;; Don't attempt for structures.
+    (if (string-match-p ".*\\..*" candidate) ;; Don't attempt for structures.
         nil
-      (inferior-octave-send-list-and-digest (list (concat "which ('" prefix "');\n")))
+      (inferior-octave-send-list-and-digest (list (concat "which ('" candidate "');\n")))
       (concat " " (nth 3 (split-string (car inferior-octave-output-list) " ")))
       )))
 
+;; How does this differ from annotate?
+;; (defun company-octave-get-meta-info (prefix)
+;;   "Use Octave REPL's 'which' command to get inline annotations. It tells us the type of the prefix."
+;;   (with-local-quit
+;;   (inferior-octave-send-list-and-digest (list (concat "which ('" prefix "');\n")))
+;;   (car inferior-octave-output-list)))
+
+;; (defun company-octave-get-doc-buffer (prefix)
+;;   ;; get basic info on prefix
+;;   (inferior-octave-send-list-and-digest (list (concat "which ('" arg "');\n")))
+;;   (pcase (nth 3 (split-string (car inferior-octave-output-list) " "))
+;;     ("function" (progn
+;;                   (inferior-octave-send-list-and-digest (list (concat "help ('" arg "');\n")))))
+;;     ("variable" (progn
+;;                   (inferior-octave-send-list-and-digest (list (concat "type ('" arg "', '-q');\n"))))))
+;;   ;; remove empty lines, separate what's left
+;;   (company-doc-buffer
+;;    (combine-and-quote-strings (cl-loop for candidate in inferior-octave-output-list
+;;                                        if (not (string-equal candidate ""))
+;;                                        collect candidate)
+;;                               "\n"))
+;;   (company-show-doc-buffer))
+
 ;;;###autoload
 (defun company-octave-backend (command &optional arg &rest ignored)
-  "Define the backend for interacting with the Octave REPL."
+  "Define the backend for interacting with the Octave REPL. Actions taken are based on the argument COMMAND. ARG will be the prefix or completion candidate, depending on COMMAND. IGNORED is ignored."
   (interactive (list 'interactive))
   (with-local-quit
   (cl-case command
