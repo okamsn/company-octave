@@ -69,29 +69,6 @@
       (concat " " (nth 3 (split-string (car inferior-octave-output-list) " ")))
       )))
 
-;; How does this differ from annotate?
-;; (defun company-octave-get-meta-info (prefix)
-;;   "Use Octave REPL's 'which' command to get inline annotations. It tells us the type of the prefix."
-;;   (with-local-quit
-;;   (inferior-octave-send-list-and-digest (list (concat "which ('" prefix "');\n")))
-;;   (car inferior-octave-output-list)))
-
-;; (defun company-octave-get-doc-buffer (prefix)
-;;   ;; get basic info on prefix
-;;   (inferior-octave-send-list-and-digest (list (concat "which ('" arg "');\n")))
-;;   (pcase (nth 3 (split-string (car inferior-octave-output-list) " "))
-;;     ("function" (progn
-;;                   (inferior-octave-send-list-and-digest (list (concat "help ('" arg "');\n")))))
-;;     ("variable" (progn
-;;                   (inferior-octave-send-list-and-digest (list (concat "type ('" arg "', '-q');\n"))))))
-;;   ;; remove empty lines, separate what's left
-;;   (company-doc-buffer
-;;    (combine-and-quote-strings (cl-loop for candidate in inferior-octave-output-list
-;;                                        if (not (string-equal candidate ""))
-;;                                        collect candidate)
-;;                               "\n"))
-;;   (company-show-doc-buffer))
-
 ;;;###autoload
 (defun company-octave-backend (command &optional arg &rest ignored)
   "Define the backend for interacting with the Octave REPL."
