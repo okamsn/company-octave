@@ -1,8 +1,9 @@
 ;;; company-octave.el --- A company backend for GNU Octave
 
 ;; Version: 0.1
+;; URL: https://github.com/okamsn/company-octave
 ;; Package-Requires: (cl-lib company)
-;; Keywords: octave, company, backend
+;; Keywords: convenience, tools, octave, company, completion
 
 ;; This file is NOT part of GNU Emacs.
 
@@ -45,7 +46,8 @@
 (defun company-octave-grab-prefix ()
   "Get the completion target, including '.' for completing struct members."
   ;; (interactive)
-  (if (or (looking-at "\\_>") (looking-back "\\_>\\." nil))
+  (if (or (looking-at "\\_>")
+          (looking-back "\\_>\\." nil))
       (buffer-substring-no-properties (point)
                                       (save-excursion
                                         (skip-chars-backward "a-zA-Z_.0-9")
@@ -57,40 +59,64 @@
 (defun company-octave-get-candidates (prefix)
   "Use Octave REPL's `completion_matches` function to get candidates for PREFIX."
   ;; (interactive)
-  (with-local-quit
-  (inferior-octave-send-list-and-digest (list (concat "completion_matches ('" prefix "');\n")))
-  inferior-octave-output-list))
+  (with-local-quit (inferior-octave-send-list-and-digest (list (concat "completion_matches ('" prefix "');\n")))
+                   inferior-octave-output-list))
 
 (defun company-octave-get-annotation (candidate)
   "Annotate whether the completion candidate CANDIDATE is a function or a variable by using Octave's `which` command. To avoid an error involving '.' and argument passing, it doesn't complete structure names."
-  (with-local-quit
-    (if (string-match-p ".*\\..*" candidate) ;; Don't attempt for structures.
-        nil
-      (inferior-octave-send-list-and-digest (list (concat "which ('" candidate "');\n")))
-      (concat " " (nth 3 (split-string (car inferior-octave-output-list) " ")))
-      )))
+  (with-local-quit (if (string-match-p ".*\\..*" candidate) ;; Don't attempt for structures.
+                       nil
+                     (inferior-octave-send-list-and-digest (list (concat "which ('" candidate "');\n")))
+                     (concat " "
+                             (nth 3
+                                  (split-string (car inferior-octave-output-list)
+                                                " "))))))
 
+;; How does this differ from annotate?
+;; (defun company-octave-get-meta-info (prefix)
+;;   "Use Octave REPL's 'which' command to get inline annotations. It tells us the type of the prefix."
+;;   (with-local-quit
+;;   (inferior-octave-send-list-and-digest (list (concat "which ('" prefix "');\n")))
+;;   (car inferior-octave-output-list)))
+
+;; (defun company-octave-get-doc-buffer (prefix)
+;;   ;; get basic info on prefix
+;;   (inferior-octave-send-list-and-digest (list (concat "which ('" arg "');\n")))
+;;   (pcase (nth 3 (split-string (car inferior-octave-output-list) " "))
+;;     ("function" (progn
+;;                   (inferior-octave-send-list-and-digest (list (concat "help ('" arg "');\n")))))
+;;     ("variable" (progn
+;;                   (inferior-octave-send-list-and-digest (list (concat "type ('" arg "', '-q');\n"))))))
+;;   ;; remove empty lines, separate what's left
+;;   (company-doc-buffer
+;;    (combine-and-quote-strings (cl-loop for candidate in inferior-octave-output-list
+;;                                        if (not (string-equal candidate ""))
+;;                                        collect candidate)
+;;                               "\n"))
+;;   (company-show-doc-buffer))
+
+;;; The Backend
 ;;;###autoload
 (defun company-octave-backend (command &optional arg &rest ignored)
   "Define the backend for interacting with the Octave REPL. Actions taken are based on the argument COMMAND. ARG will be the prefix or completion candidate, depending on COMMAND. IGNORED is ignored."
   (interactive (list 'interactive))
-  (with-local-quit
-  (cl-case command
-    (interactive (company-begin-backend 'company-octave-backend))
-    (prefix (if (eq major-mode 'octave-mode)
-                (company-octave-grab-prefix)))
-    (candidates (company-octave-get-candidates arg))
-    (annotation (company-octave-get-annotation arg))
-    (init (run-octave))
-    ;; (doc-buffer (company-octave-get-doc-buffer arg)))
-    )))
+  (with-local-quit (cl-case command
+                     (interactive (company-begin-backend 'company-octave-backend))
+                     (prefix (if (eq major-mode 'octave-mode)
+                                 (company-octave-grab-prefix)))
+                     (candidates (company-octave-get-candidates arg))
+                     (annotation (company-octave-get-annotation arg))
+                     (init (run-octave))
+                     ;; (doc-buffer (company-octave-get-doc-buffer arg)))
+                     )))
 
+;;; Recommended settings
 ;;;###autoload
 (defun company-octave-settings ()
   "Set up company with the appropriate backends. You might wish to change this."
   (add-to-list 'company-backends 'company-octave-backend)
   (setq company-dabbrev-code-other-buffers 'code)
-  (setq-mode-local octave company-dabbrev-code-ignore-case t)
+  ;; (setq-mode-local octave company-dabbrev-code-ignore-case t)
   )
 
 (provide 'company-octave)
