@@ -26,10 +26,14 @@
 ;;; Commentary:
 
 ;; This package provides a company backend for GNU Octave.
+;; It uses the Octave REPL to provide completion candidates,
+;; and so only provides built-in/submitted variables and functions. 
 ;; It is able to provide completion candidates for
-;; structure field names, and uses the Octave inferior
-;; process to provide completions. Therefore, the Octave
-;; REPL must be running (use the command "run-octave").
+;; structure field names. For example, it will suggest
+;; 'someStruct.someField' for 'someStruct.' (the REPL requires 
+;; the period), so long as the REPL is aware of 'someStruct.someField'
+;; (such as by submitting the relevant region to the inferior Octave
+;; process).
 
 ;;; Change Log:
 
@@ -83,7 +87,7 @@
                                  (company-octave-grab-prefix)))
                      (candidates (company-octave-get-candidates arg))
                      (annotation (company-octave-get-annotation arg))
-                     (init (run-octave))
+                     (init (run-octave t))
                      )))
 
 ;;; Recommended settings
