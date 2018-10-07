@@ -1,6 +1,6 @@
 # company-octave
 
-This is a Company backend for GNU Octave. It uses the Octave REPL to get completion candidates, and can complete for structs. The REPL must be aware of the desired completion candidate for it to be suggested.
+This is a Company backend for GNU Octave. It uses the Octave REPL to get completion candidates, and can complete for structs. The REPL must be aware of the desired completion candidate for it to be suggested. It (the inferior Octave process) will suggest built-in functions and variables, and anything that has been submitted to the REPL.
 
 It is basically a Company version of `ac-octave` that can handle prefixes like "someStructName." (the '.' is required) and return candidates like "someStructName.someField".
 
