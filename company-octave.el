@@ -84,7 +84,6 @@
                      (candidates (company-octave-get-candidates arg))
                      (annotation (company-octave-get-annotation arg))
                      (init (run-octave))
-                     ;; (doc-buffer (company-octave-get-doc-buffer arg)))
                      )))
 
 ;;; Recommended settings
