@@ -1,4 +1,4 @@
-;;; company-octave.el --- A company backend for GNU Octave
+;;; company-octave.el --- A company backend for GNU Octave -*- lexical-binding: t; -*-
 
 ;; Version: 0.1
 ;; URL: https://github.com/okamsn/company-octave
