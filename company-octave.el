@@ -27,10 +27,10 @@
 
 ;; This package provides a company backend for GNU Octave.
 ;; It uses the Octave REPL to provide completion candidates,
-;; and so only provides built-in/submitted variables and functions. 
+;; and so only provides built-in/submitted variables and functions.
 ;; It is able to provide completion candidates for
 ;; structure field names. For example, it will suggest
-;; 'someStruct.someField' for 'someStruct.' (the REPL requires 
+;; 'someStruct.someField' for 'someStruct.' (the REPL requires
 ;; the period), so long as the REPL is aware of 'someStruct.someField'
 ;; (such as by submitting the relevant region to the inferior Octave
 ;; process).
