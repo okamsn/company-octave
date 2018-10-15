@@ -2,7 +2,7 @@
 
 ;; Version: 0.1
 ;; URL: https://github.com/okamsn/company-octave
-;; Package-Requires: (cl-lib company)
+;; Package-Requires: ((company "0.9") (emacs "24.3"))
 ;; Keywords: convenience, tools, octave, company, completion
 
 ;; This file is NOT part of GNU Emacs.
