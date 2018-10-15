@@ -93,7 +93,7 @@
 ;;; Recommended settings
 ;;;###autoload
 (defun company-octave-settings ()
-  "Set up company with the appropriate backends. You might wish to change this."
+  "Set up company with the appropriate backends. You might wish to change this. Add this function (or equivalent) to the hook for Octave mode."
   (add-to-list 'company-backends 'company-octave-backend)
   (setq company-dabbrev-code-other-buffers 'code)
   (setq-mode-local octave company-dabbrev-code-ignore-case t)

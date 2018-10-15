@@ -5,3 +5,7 @@ This is a Company backend for GNU Octave. It uses the Octave REPL to get complet
 It is basically a Company version of `ac-octave` that can handle prefixes like "someStructName." (the '.' is required) and return candidates like "someStructName.someField".
 
 Right now, given that Octave has a built-in mode for Emacs with all the feature support that comes with that, this has a minimum of features.
+
+## Using the backend
+
+To use the backend, add the function `company-octave-setting` (or equivalent) to the hook for Octave mode. Company mode must be active.
